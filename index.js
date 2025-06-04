@@ -8,6 +8,8 @@ require("dotenv").config();
 
 const connectDB = require("./src/config/dbConnect");
 const userRoutes = require("./src/routes/userRoutes");
+const studentRoutes = require("./src/routes/studentRoutes");
+const teacherRoutes = require("./src/routes/teacherRoutes");
 
 dotenv.config();
 const app = express();
@@ -34,6 +36,8 @@ connectDB();
 
 
 app.use("/users", userRoutes);
+app.use("/students", studentRoutes);
+app.use("/teachers", teacherRoutes);
 
 app.listen(PORT, () => {
   console.log(` Server running on port ${PORT}`);

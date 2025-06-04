@@ -1,84 +1,344 @@
+// const bcrypt = require("bcryptjs");
+// const User = require("../models/userModel");
+// const { GenerateToken } = require("../middleware/jwtAuth");
+
+// const registerUser = async (req, res) => {
+//   try {
+//     const { username, email, password } = req.body;
+//     if (!username || !email || !password) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const userExists = await User.findOne({ email });
+//     if (userExists) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     const newUser = await User.create({ username, email, password: hashedPassword });
+
+//     const token = GenerateToken({ id: newUser._id });
+
+//     res.status(201).json({
+//       message: "User registered successfully",
+//       user: {
+//         _id: newUser._id,
+//         username: newUser.username,
+//         email: newUser.email,
+//       },
+//       token,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
+// const loginUser = async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+//     if (!username || !password) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const user = await User.findOne({ username });
+//     if (!user) {
+//       return res.status(400).json({ message: "User does not exist" });
+//     }
+
+//     const isValid = await bcrypt.compare(password, user.password);
+//     if (!isValid) {
+//       return res.status(400).json({ message: "Invalid password" });
+//     }
+
+//     const token = GenerateToken({ id: user._id });
+
+//     res.status(200).json({
+//       message: "User logged in successfully",
+//       user: {
+//         _id: user._id,
+//         username: user.username,
+//         email: user.email,
+//       },
+//       token,
+//     });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
+// const logoutUser = (req, res) => {
+//   res.status(200).json({ message: "Logged out successfully; please discard your token." });
+// };
+
+// module.exports = {
+//   registerUser,
+//   loginUser,
+//   logoutUser,
+// };
+
+   
+
+ // Globle Error 
+
+// const bcrypt = require("bcryptjs");
+// const User = require("../models/userModel");
+// const { GenerateToken } = require("../middleware/jwtAuth");
+// const { ApiError } = require("../utils/ApiError");
+// const { ApiRes } = require("../utils/ApiRes");
+
+// // @desc Register user
+// const registerUser = async (req, res, next) => {
+//   try {
+//     const { username, email, password } = req.body;
+//     if (!username || !email || !password) {
+//       throw new ApiError(400, "All fields are required");
+//     }
+
+//     const userExists = await User.findOne({ email });
+//     if (userExists) {
+//       throw new ApiError(400, "User already exists");
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+//     const newUser = await User.create({ username, email, password: hashedPassword });
+
+//     const token = GenerateToken({ id: newUser._id });
+
+//     res
+//       .status(201)
+//       .json(
+//         new ApiRes(201, {
+//           _id: newUser._id,
+//           username: newUser.username,
+//           email: newUser.email,
+//           token,
+//         }, "User registered successfully")
+//       );
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+
+// const loginUser = async (req, res, next) => {
+//   try {
+//     const { username, password } = req.body;
+//     if (!username || !password) {
+//       throw new ApiError(400, "All fields are required");
+//     }
+
+//     const user = await User.findOne({ username });
+//     if (!user) {
+//       throw new ApiError(400, "User does not exist");
+//     }
+
+//     const isValid = await bcrypt.compare(password, user.password);
+//     if (!isValid) {
+//       throw new ApiError(400, "Invalid password");
+//     }
+
+//     const token = GenerateToken({ id: user._id });
+
+//     res
+//       .status(200)
+//       .json(
+//         new ApiRes(200, {
+//           _id: user._id,
+//           username: user.username,
+//           email: user.email,
+//           token,
+//         }, "User logged in successfully")
+//       );
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+
+// const logoutUser = (req, res, next) => {
+//   res
+//     .status(200)
+//     .json(new ApiRes(200, null, "Logged out successfully; please discard your token."));
+// };
+
+// module.exports = {
+//   registerUser,
+//   loginUser,
+//   logoutUser,
+// };
+
+
+
+        // Role Based
 
 const bcrypt = require("bcryptjs");
 const User = require("../models/userModel");
 const { GenerateToken } = require("../middleware/jwtAuth");
-const { ApiError } = require("../utils/ApiError");
-const { ApiRes } = require("../utils/ApiRes");
 
-const registerUser = async (req, res, next) => {
+exports.register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
-      throw new ApiError(400, "All fields are required");
+    const { username, email, password, role } = req.body;
+
+    if (! username|| !email || !password || !role) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      throw new ApiError(400, "User already exists");
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ username, email, password: hashedPassword });
+    const user = await User.create({ name, email, password: hashedPassword, role });
 
-    const token = GenerateToken({ id: newUser._id });
+    const token = GenerateToken({ id: user._id, role: user.role });
 
-    res
-      .status(201)
-      .json(
-        new ApiRes(201, {
-          _id: newUser._id,
-          username: newUser.username,
-          email: newUser.email,
-          token,
-        }, "User registered successfully")
-      );
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        _id: user._id,
+         username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+      token,
+    });
   } catch (err) {
-    next(err);
+    res.status(500).json({ error: err.message });
   }
 };
 
-const loginUser = async (req, res, next) => {
+exports.login = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) {
-      throw new ApiError(400, "All fields are required");
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    const user = await User.findOne({ username });
-    if (!user) {
-      throw new ApiError(400, "User does not exist");
-    }
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) {
-      throw new ApiError(400, "Invalid password");
-    }
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
-    const token = GenerateToken({ id: user._id });
+    const token = GenerateToken({ id: user._id, role: user.role });
 
-    res
-      .status(200)
-      .json(
-        new ApiRes(200, {
-          _id: user._id,
-          username: user.username,
-          email: user.email,
-          token,
-        }, "User logged in successfully")
-      );
+    res.status(200).json({
+      message: "Login successful",
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+      token,
+    });
   } catch (err) {
-    next(err);
+    res.status(500).json({ message: err.message });
   }
 };
 
-const logoutUser = (req, res, next) => {
-  res
-    .status(200)
-    .json(new ApiRes(200, null, "Logged out successfully; please discard your token."));
+exports.logout = (req, res) => {
+  res.status(200).json({ message: "Logged out successfully; please discard your token." });
 };
 
-module.exports = {
-  registerUser,
-  loginUser,
-  logoutUser,
-};
+
+
+
+// const bcrypt = require("bcryptjs");
+// const User = require("../models/userModel");
+// const { GenerateToken } = require("../middleware/jwtAuth");
+
+// exports.register = async (req, res) => {
+//   try {
+//     const { username, email, password, role } = req.body;
+
+//     if (!username || !email || !password || role === undefined) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: "User already exists" });
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const newUser = await User.create({
+//       username,
+//       email,
+//       password: hashedPassword,
+//       role,
+//     });
+
+//     const accessToken = GenerateToken({ id: newUser._id, role: newUser.role });
+
+//     res
+//       .cookie("accessToken", accessToken, {
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === "production",
+//         sameSite: "strict",
+//         maxAge: 15 * 60 * 1000, // 15 minutes
+//       })
+//       .status(201)
+//       .json({
+//         message: "User registered successfully",
+//         user: {
+//           _id: newUser._id,
+//           name: newUser.name,
+//           email: newUser.email,
+//           role: newUser.role,
+//         },
+//       });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
+
+// exports.login = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     if (!email || !password) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const user = await User.findOne({ email });
+//     if (!user) return res.status(404).json({ message: "User not found" });
+
+//     const match = await bcrypt.compare(password, user.password);
+//     if (!match) return res.status(401).json({ message: "Invalid credentials" });
+
+//     const accessToken = GenerateToken({ id: user._id, role: user.role });
+
+//     res
+//       .cookie("accessToken", accessToken, {
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === "production",
+//         sameSite: "strict",
+//         maxAge: 15 * 60 * 1000,
+//       })
+//       .status(200)
+//       .json({
+//         message: "Login successful",
+//         user: {
+//           _id: user._id,
+//           name: user.name,
+//           email: user.email,
+//           role: user.role,
+//         },
+//       });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
+// exports.logout = (req, res) => {
+//   res
+//     .clearCookie("accessToken", {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === "production",
+//       sameSite: "strict",
+//     })
+//     .status(200)
+//     .json({ message: "Logged out successfully" });
+// };
