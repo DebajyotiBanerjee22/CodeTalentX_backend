@@ -22,6 +22,7 @@
 // module.exports = User;
 
 
+
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
@@ -34,10 +35,10 @@ const userSchema = new mongoose.Schema({
   password: String,
   role: {
     type: String,
-    enum: ["admin", "teacher", "student"],
+    enum: ["admin", "teacher", "student","superadmin"],
     default: "student",
   },
   }, { timestamps: true });
 const User = mongoose.model('User', userSchema);
 module.exports = User;
-  //  enum: [0, 1, 2], // 0: student, 1: teacher, 2: admin
+  //  enum: [0, 1, 2], // 0: student, 1: teacher, 2: admin 3:superadmin

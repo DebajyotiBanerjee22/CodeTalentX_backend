@@ -78,7 +78,7 @@
 
    
 
- // Globle Error 
+            // Globle Error 
 
 // const bcrypt = require("bcryptjs");
 // const User = require("../models/userModel");
@@ -167,82 +167,7 @@
 
 
 
-        // Role Based
-
-const bcrypt = require("bcryptjs");
-const User = require("../models/userModel");
-const { GenerateToken } = require("../middleware/jwtAuth");
-
-exports.register = async (req, res) => {
-  try {
-    const { username, email, password, role } = req.body;
-
-    if (! username|| !email || !password || !role) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ username, email, password: hashedPassword, role });
-
-    const token = GenerateToken({ id: user._id, role: user.role });
-
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-       _id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-      },
-      token,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
-    }
-
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
-
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(401).json({ message: "Invalid credentials" });
-
-    const token = GenerateToken({ id: user._id, role: user.role });
-
-    res.status(200).json({
-      message: "Login successful",
-      user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-      },
-      token,
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-exports.logout = (req, res) => {
-  res.status(200).json({ message: "Logged out successfully; please discard your token." });
-};
-
-
-
+        // Role Based 
 
 // const bcrypt = require("bcryptjs");
 // const User = require("../models/userModel");
@@ -252,7 +177,7 @@ exports.logout = (req, res) => {
 //   try {
 //     const { username, email, password, role } = req.body;
 
-//     if (!username || !email || !password || role === undefined) {
+//     if (! username|| !email || !password || !role) {
 //       return res.status(400).json({ message: "All fields are required" });
 //     }
 
@@ -262,35 +187,22 @@ exports.logout = (req, res) => {
 //     }
 
 //     const hashedPassword = await bcrypt.hash(password, 10);
+//     const user = await User.create({ username, email, password: hashedPassword, role });
 
-//     const newUser = await User.create({
-//       username,
-//       email,
-//       password: hashedPassword,
-//       role,
+//     const token = GenerateToken({ id: user._id, role: user.role });
+
+//     res.status(201).json({
+//       message: "User registered successfully",
+//       user: {
+//        _id: user._id,
+//         username: user.username,
+//         email: user.email,
+//         role: user.role,
+//       },
+//       token,
 //     });
-
-//     const accessToken = GenerateToken({ id: newUser._id, role: newUser.role });
-
-//     res
-//       .cookie("accessToken", accessToken, {
-//         httpOnly: true,
-//         secure: process.env.NODE_ENV === "production",
-//         sameSite: "strict",
-//         maxAge: 15 * 60 * 1000, // 15 minutes
-//       })
-//       .status(201)
-//       .json({
-//         message: "User registered successfully",
-//         user: {
-//           _id: newUser._id,
-//           name: newUser.name,
-//           email: newUser.email,
-//           role: newUser.role,
-//         },
-//       });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
 //   }
 // };
 
@@ -308,37 +220,115 @@ exports.logout = (req, res) => {
 //     const match = await bcrypt.compare(password, user.password);
 //     if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
-//     const accessToken = GenerateToken({ id: user._id, role: user.role });
+//     const token = GenerateToken({ id: user._id, role: user.role });
 
-//     res
-//       .cookie("accessToken", accessToken, {
-//         httpOnly: true,
-//         secure: process.env.NODE_ENV === "production",
-//         sameSite: "strict",
-//         maxAge: 15 * 60 * 1000,
-//       })
-//       .status(200)
-//       .json({
-//         message: "Login successful",
-//         user: {
-//           _id: user._id,
-//           name: user.name,
-//           email: user.email,
-//           role: user.role,
-//         },
-//       });
+//     res.status(200).json({
+//       message: "Login successful",
+//       user: {
+//         _id: user._id,
+//         username: user.username,
+//         email: user.email,
+//         role: user.role,
+//       },
+//       token,
+//     });
 //   } catch (err) {
 //     res.status(500).json({ message: err.message });
 //   }
 // };
 
 // exports.logout = (req, res) => {
-//   res
-//     .clearCookie("accessToken", {
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === "production",
-//       sameSite: "strict",
-//     })
-//     .status(200)
-//     .json({ message: "Logged out successfully" });
+//   res.status(200).json({ message: "Logged out successfully; please discard your token." });
 // };
+
+    // Global Error 
+
+const bcrypt = require("bcryptjs");
+const User = require("../models/userModel");
+const { GenerateToken } = require("../middleware/jwtAuth");
+const { ApiError } = require("../utils/ApiError");
+const { ApiRes } = require("../utils/ApiRes");
+
+// Register
+exports.register = async (req, res, next) => {
+  try {
+    const { username, email, password, role } = req.body;
+
+    if (!username || !email || !password || !role) {
+      throw new ApiError(400, "All fields are required");
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new ApiError(400, "User already exists");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+      role,
+    });
+
+    const token = GenerateToken({ id: user._id, role: user.role });
+
+    return res
+      .status(201)
+      .json(
+        new ApiRes(201, {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          token,
+        }, "User registered successfully")
+      );
+  } catch (err) {
+    next(err); 
+  }
+};
+
+// Login
+exports.login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      throw new ApiError(400, "All fields are required");
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      throw new ApiError(401, "Invalid credentials");
+    }
+
+    const token = GenerateToken({ id: user._id, role: user.role });
+
+    return res
+      .status(200)
+      .json(
+        new ApiRes(200, {
+          _id: user._id,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+          token,
+        }, "Login successful")
+      );
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Logout
+exports.logout = (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiRes(200, null, "Logged out successfully; please discard your token."));
+};
