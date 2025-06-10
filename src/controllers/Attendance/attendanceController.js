@@ -1,5 +1,4 @@
 const Attendance = require('../../models/Attendance/attendanceModel');
-// const Student = require('../../models/Attendance/studentModel');
 
 exports.markAttendance = async (req, res) => {
   try {
@@ -35,7 +34,7 @@ exports.downloadReport = async (req, res) => {
       .populate('records.studentId', 'name')
       .sort({ date: 1 });
 
-    res.status(200).json(data); // You can format this into CSV/PDF in the frontend
+    res.status(200).json(data); 
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

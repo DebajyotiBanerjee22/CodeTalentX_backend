@@ -6,3 +6,7 @@ router.post('/generate', generateReportCard);
 router.get('/:studentId', getReportCard);
 
 module.exports = router;
+
+// API  Test
+// http://localhost:5000/report-card/generat =Post=Create 
+// http://localhost:5000/report-card/studentId = Get = Read

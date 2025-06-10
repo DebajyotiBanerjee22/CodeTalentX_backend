@@ -14,9 +14,13 @@ router.put("/:id", roleMiddleware("admin"),getTeacherById);
 module.exports = router;
 
 
-// router.post('/', verifyJWT, authorizeRoles('admin'), teacherController.createTeacher);
-// router.get('/', verifyJWT, authorizeRoles('admin'), teacherController.getAllTeachers);
-// router.get('/:id', verifyJWT, authorizeRoles('admin'), teacherController.getTeacherById);
-// router.put('/:id', verifyJWT, authorizeRoles('admin'), teacherController.updateTeacher);
-// router.delete('/:id', verifyJWT, authorizeRoles('admin'), teacherController.deleteTeacher);
-// router.get('/me/profile', verifyJWT, authorizeRoles('teacher'), teacherController.getOwnProfile);
+
+
+  // Api Test Url /Api End Point
+
+// http://localhost:5000/teachers/6847e55c275f27a90c06a627 = Put = Update 
+// http://localhost:5000/teachers/ = Post = Create
+// http://localhost:5000/teachers/ = Get = readAll 
+// http://localhost:5000/teachers/6847e55c275f27a90c06a627  = Delete = delete
+// http://localhost:5000/teachers/6847e55c275f27a90c06a627 = Get = readbyId
+

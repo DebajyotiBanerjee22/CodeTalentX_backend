@@ -9,3 +9,8 @@ router.post('/record', recordPayment);
 router.get('/status/:studentId', getPaymentStatus);
 
 module.exports = router;
+
+
+        // API Test
+//http://localhost:5000/fees/record = Post
+//http://localhost:5000/fees/status/studentId = Get 

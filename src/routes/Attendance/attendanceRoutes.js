@@ -11,3 +11,8 @@ router.get('/view/:studentId', viewAttendance);
 router.get('/report/:classId', downloadReport);
 
 module.exports = router;
+
+         // API Test Url 
+// http://localhost:5000/attendance/mark =Post = create
+//http://localhost:5000/attendance/view/studentId  = Get= Read 
+//http://localhost:5000/attendance/report/:classId = Get = Read
