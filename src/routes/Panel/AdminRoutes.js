@@ -1,3 +1,26 @@
+// const express = require("express");
+// const router = express.Router();
+// const {
+//   getAllUsers,
+//   changeUserRole,
+//   deleteUser,
+//   createAdmin
+// } = require("../controllers/AdminController");
+
+// const { jwtAuthMiddleware } = require("../middleware/jwtAuth");
+// const roleMiddleware = require("../middleware/roleMiddleware");
+
+// router.use(jwtAuthMiddleware); 
+// router.use(roleMiddleware(["admin"]));
+
+// router.post("/", createAdmin); 
+// router.get("/", getAllUsers);
+// router.put("/:id", changeUserRole);
+// router.delete("/:id", deleteUser);
+
+// module.exports = router;
+
+
 const express = require("express");
 const router = express.Router();
 const {
